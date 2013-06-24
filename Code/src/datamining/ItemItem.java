@@ -13,12 +13,12 @@ public class ItemItem
     // Build table with ratings
     public void buildRatingTable(TreeMap<Integer, UserPreferences> userPrefs)
     {
-        if(userIds == null)
-        {
-            userIds = new int[0];
-            itemIds = new int[0];
-            ratings = new float[0][0];
-        }
+        // Instantiate everything
+        userIds = new int[0];
+        itemIds = new int[0];
+        ratings = new float[0][0];
+        
+        // Fill the userIds and itemIds
         for(int i = 0; i < userPrefs.size(); i++)
         {
             // UserID
@@ -34,6 +34,7 @@ public class ItemItem
         // Give rating table it's new size
         ratings = new float[this.userIds.length][this.itemIds.length];
         
+        // Fill the rating table
         for(int i = 0; i < userIds.length; i++)
         {
             for(int c = 0; c < userPrefs.get(i+1).getItemIds().length; c++)
@@ -67,22 +68,8 @@ public class ItemItem
         return sourceArr;
     }
     
-    @Override
-    public String toString()
-    {
-        String output = "";
-        
-        output += "------- UserIDS -------";
-        for(int i = 0; i < userIds.length; i++)
-        {
-            output += " "+userIds[i];
-        }
-        output += " ------- ItemIDS -------";
-        for(int i = 0; i < itemIds.length; i++)
-        {
-            output += " "+itemIds[i];
-        }
-        
+    public void printALl()
+    {        
         // Table print
         System.out.print("   ");
         for(int a=0; a < itemIds.length; a++)
@@ -102,7 +89,5 @@ public class ItemItem
             }
             System.out.println("");
         }
-        
-        return output;
     }
 }
