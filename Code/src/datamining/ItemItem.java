@@ -8,7 +8,7 @@ public class ItemItem
     // Data
     private int[] userIds;
     private int[] itemIds;
-    private int[][] ratings;
+    private float[][] ratings;
     
     // Build table with ratings
     public void buildRatingTable(TreeMap<Integer, UserPreferences> userPrefs)
@@ -17,7 +17,7 @@ public class ItemItem
         {
             userIds = new int[0];
             itemIds = new int[0];
-            ratings = new int[0][0];
+            ratings = new float[0][0];
         }
         for(int i = 0; i < userPrefs.size(); i++)
         {
@@ -28,6 +28,18 @@ public class ItemItem
             for(int c = 0; c < userPrefs.get(i+1).getItemIds().length; c++)
             {
                 this.itemIds = this.addItemId(userPrefs.get(i+1).getItemIds()[c], this.itemIds);
+            }
+        }
+        
+        // Give rating table it's new size
+        ratings = new float[this.userIds.length][this.itemIds.length];
+        
+        for(int i = 0; i < userIds.length; i++)
+        {
+            for(int c = 0; c < userPrefs.get(i+1).getItemIds().length; c++)
+            {
+                int pos = Arrays.binarySearch(this.itemIds, userPrefs.get(i+1).getItemIds()[c]);
+                ratings[i][pos] = userPrefs.get(i+1).getRatings()[c];
             }
         }
     }
@@ -69,6 +81,26 @@ public class ItemItem
         for(int i = 0; i < itemIds.length; i++)
         {
             output += " "+itemIds[i];
+        }
+        
+        // Table print
+        System.out.print("   ");
+        for(int a=0; a < itemIds.length; a++)
+        {
+            if(itemIds[a] < 10)
+                System.out.print(itemIds[a]+"   ");
+            else
+                System.out.print(itemIds[a]+"  ");
+        }
+        System.out.println("");
+        for(int i = 0; i < userIds.length; i++)
+        {
+            System.out.print(userIds[i] + "  ");
+            for(int c=0; c < itemIds.length; c++)
+            {
+                System.out.print(ratings[i][c]+" ");
+            }
+            System.out.println("");
         }
         
         return output;
