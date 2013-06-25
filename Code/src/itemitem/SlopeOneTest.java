@@ -5,6 +5,7 @@
 package itemitem;
 
 import datamining.UserPreferences;
+import java.util.Random;
 import java.util.TreeMap;
 
 /**
@@ -16,7 +17,11 @@ public class SlopeOneTest {
     public void testSlopeOne()
     {
         userPreferences = new TreeMap<Integer, UserPreferences>();
-
+        
+        /*
+         * A small set of users 
+         */
+        
         // A user
         UserPreferences u1 = new UserPreferences(101);
         u1.addElement(101, 5.0f);
@@ -66,17 +71,41 @@ public class SlopeOneTest {
         u5.addElement(105, 3.5f);
         u5.addElement(106, 4.0f);
         userPreferences.put(105, u5);
+        
         /*
-        // A user
-        UserPreferences u6 = new UserPreferences(6);
-        u6.addElement(1, 3.0f);
-        u6.addElement(4, 5.0f);
-        u6.addElement(5, 2.4f);
-        //u6.addElement(6, 1.0f);
-        //u6.addElement(7, 3.0f);
-        //u6.addElement(8, 5.0f);
-        userPreferences.put(6, u6);
-        */
+         * Generate massive amounts of random data
+         *
+        // Total users
+        for(int p = 0; p < 10000; p++)
+        {
+            if(!userPreferences.containsKey(p))
+            {
+                UserPreferences u = new UserPreferences(p);
+                int Low = 2;
+                int High = 100;
+                Random r = new Random();
+                int R = r.nextInt(High-Low) + Low;
+                
+                // Random number of item ratings per user between Low & High
+                for(int e = 0; e < R; e++)
+                {
+                    // ItemID between Low2 and High2
+                    int Low2 = 1;
+                    int High2 = 100;
+                    Random r2 = new Random();
+                    int R2 = r2.nextInt(High2-Low2) + Low2;
+                    
+                    //Rating between LowF and HighF
+                    float LowF = 0.0f;
+                    float HighF = 5.0f;
+                    Random rF = new Random();
+                    float RF = rF.nextFloat() * (HighF - LowF) + LowF;
+                    u.addElement(R2, RF);
+                }
+                userPreferences.put(p, u);
+            }
+        } */
+        
         // Test ItemItem
         ItemItem item = new ItemItem();
         item.buildRatingTable(userPreferences);
