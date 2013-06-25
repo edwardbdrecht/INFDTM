@@ -21,7 +21,6 @@ public class SlopeOneTest {
         /*
          * A small set of users 
          */
-        
         // A user
         UserPreferences u1 = new UserPreferences(101);
         u1.addElement(101, 5.0f);
@@ -53,24 +52,24 @@ public class SlopeOneTest {
         userPreferences.put(103, u3);
 
         // A user
-        UserPreferences u4 = new UserPreferences(104);
+        UserPreferences u4 = new UserPreferences(105);
         u4.addElement(101, 5.0f);
         u4.addElement(103, 3.0f);
         u4.addElement(104, 4.5f);
         u4.addElement(106, 4.0f);
         //u4.addElement(12, 4.8f);
         //u4.addElement(13, 3.0f);
-        userPreferences.put(104, u4);
+        userPreferences.put(105, u4);
 
         // A user
-        UserPreferences u5 = new UserPreferences(105);
+        UserPreferences u5 = new UserPreferences(106);
         u5.addElement(101, 4.0f);
         u5.addElement(102, 3.0f);
         u5.addElement(103, 2.0f);
         u5.addElement(104, 4.0f);
         u5.addElement(105, 3.5f);
         u5.addElement(106, 4.0f);
-        userPreferences.put(105, u5);
+        userPreferences.put(106, u5);
         
         /*
          * Generate massive amounts of random data
@@ -91,7 +90,7 @@ public class SlopeOneTest {
                 {
                     // ItemID between Low2 and High2
                     int Low2 = 1;
-                    int High2 = 100;
+                    int High2 = 110;
                     Random r2 = new Random();
                     int R2 = r2.nextInt(High2-Low2) + Low2;
                     
@@ -106,15 +105,55 @@ public class SlopeOneTest {
             }
         } */
         
-        // Test ItemItem
+        /*
+         * Build ItemItem with given users
+         */
         ItemItem item = new ItemItem();
         item.buildRatingTable(userPreferences);
         item.createAndFillOneSlope();
         item.printALl();
+        
+        /*
+         * Add a user
+         *
+        System.out.println("------- ADDING A USER -------");
+        UserPreferences u6 = new UserPreferences(104);
+        u6.addElement(101, 1.0f);
+        u6.addElement(102, 2.0f);
+        u6.addElement(103, 3.0f);
+        u6.addElement(104, 4.0f);
+        u6.addElement(105, 4.5f);
+        u6.addElement(106, 5.0f);
+        item.addItem(u6);
+        item.printALl();
+        * /
+        
+        /*
+         * Update a user
+         *
+        System.out.println("------- UPDATE SAME USER -------");
+        u6.addElement(107, 2.9f);
+        item.updateItem(u6);
+        item.printALl();
+        * /
+        
+        /*
+         * Remove a user
+         *
+        System.out.println("------- REMOVE SAME USER -------");
+        item.removeItem(u6);
+        item.printALl();
+        * /
+
+        /*
+         * Get ItemItem based recommendation for specified user
+         */
         int userIdToTest = 103;
         RecommendationResult[] r = item.getRecommendation(userIdToTest);
         
-        // print ItemItem recommendation
+        /*
+         * Print recommendation
+         */
         System.out.println("------- ITEMITEM RECOMMENDATION FOR USER "+userIdToTest+" -------");
         for(int i = 0; i < r.length; i++)
         {

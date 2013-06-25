@@ -109,7 +109,6 @@ public class ItemItem
                 {
                     hasItemIds = ArrayResize.addItem(i, hasItemIds);
                     ratingForIds = ArrayResize.addItem(ratings[pos][i], ratingForIds);
-                    int[] t = new int[0]; 
                 }
                 else
                 {
@@ -148,13 +147,121 @@ public class ItemItem
                 RecommendationResult result = new RecommendationResult();
                 result.setItemId(itemIds[doesNoteHaveItemIds[c]]);
                 result.setRecomValue(totalRating);
-                recommendation = ArrayResize.addItem(result, recommendation);
+                // Get a sorted array. Only use the result if calculated position belongs to top! 
+                //(stores about 75% less data!) and only takes top 4
+                recommendation = ArrayResize.addItem(result, recommendation, 4);
             }
             
             return recommendation;
         }
         
         return res;
+    }
+    
+    /*
+     * Adds an item to the Rating table and rebuilds the One Slope table
+     */
+    public void addItem(UserPreferences pref)
+    {
+        // First add the new UserId and ItemId
+        this.userIds = ArrayResize.addItem(pref.getUserId(), this.userIds);
+        for(int c = 0; c < pref.getItemIds().length; c++)
+        {
+            this.itemIds = ArrayResize.addItem(pref.getItemIds()[c], this.itemIds);
+        }
+        
+        // Fill the new Rating table
+        int posUserId = Arrays.binarySearch(this.userIds, pref.getUserId()); //search in the itemId's array for a corresponding id.
+        if(posUserId >= 0)
+        {
+            float[][] tempArray = new float[this.userIds.length][this.itemIds.length];
+            
+            // Just copy all old values to new table for all items before position 
+            for(int i = 0; i < posUserId; i++)
+            {
+                for(int c = 0; c < this.itemIds.length; c++)
+                {
+                    tempArray[i][c] = this.ratings[i][c];
+                }
+            }
+            // Insert ratings for new user at its new spot
+            for(int p = 0; p < pref.getItemIds().length; p++)
+            {
+                int posItemId = Arrays.binarySearch(this.itemIds, pref.getItemIds()[p]);
+                tempArray[posUserId][posItemId] = pref.getRatings()[p];
+            }
+            //Copy the leftovers
+            for(int d = posUserId+1; d < this.userIds.length; d++)
+            {
+                for(int c = 0; c < this.itemIds.length; c++)
+                {
+                    tempArray[d][c] = this.ratings[d-1][c];
+                }
+            }
+            this.ratings = tempArray;
+            this.createAndFillOneSlope();
+        }
+    }
+    
+    /*
+     * Removes an item from the Rating table and rebuilds the One Slope table
+     */
+    public void removeItem(UserPreferences pref)
+    {        
+        // Get position in array
+        int pos = Arrays.binarySearch(this.userIds, pref.getUserId());
+        if(pos >= 0) // Only if truly exists
+        {
+            int[] tempUserIds = new int[this.userIds.length -1];
+            float[][] tempratingTable = new float[this.userIds.length-1][this.itemIds.length];
+            // Copy all data before position
+            for(int i = 0; i < pos; i++)
+            {
+                tempUserIds[i] = this.userIds[i];
+                for(int c = 0; c < this.itemIds.length; c++)
+                {
+                    tempratingTable[i][c] = this.ratings[i][c];
+                }
+            }
+            // Copy all data after position
+            for(int i = pos+1; i < this.userIds.length; i++)
+            {
+                tempUserIds[i-1] = this.userIds[i];
+                for(int c = 0; c < this.itemIds.length; c++)
+                {
+                    tempratingTable[i-1][c] = this.ratings[i][c];
+                }
+            }
+
+            this.userIds = tempUserIds;
+            this.ratings = tempratingTable;
+            this.createAndFillOneSlope();       
+        }
+    }
+    
+    /*
+     * Prints all data. For debugging. FTW
+     */
+    public void updateItem(UserPreferences pref)
+    {
+        // Update ItemIds
+        for(int c = 0; c < pref.getItemIds().length; c++)
+        {
+            this.itemIds = ArrayResize.addItem(pref.getItemIds()[c], this.itemIds);
+        }
+        
+        // Get position in array
+        int pos = Arrays.binarySearch(this.userIds, pref.getUserId());
+        if(pos >= 0) // Only if truly exists
+        {
+            // Update ONLY specified user
+            for(int i = 0; i < pref.getItemIds().length; i++)
+            {
+                int posItemId = Arrays.binarySearch(this.itemIds, pref.getItemIds()[i]);
+                this.ratings[pos][posItemId] = pref.getRatings()[i];
+            }
+        }
+        this.createAndFillOneSlope();
     }
     
     /*
