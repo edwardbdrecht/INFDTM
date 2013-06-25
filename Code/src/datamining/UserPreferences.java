@@ -3,7 +3,6 @@ package datamining;
 import java.util.Arrays;
 
 /**
- *
  * @author Wayne Rijsdijk
  */
 public class UserPreferences {
@@ -50,6 +49,72 @@ public class UserPreferences {
 				this.ratings = ratingsCopy;
 			}
 		}
+	}
+	
+	public RecordDataSimilarlyItems similarItems(int[] itemsUser2, float[] ratingsUser2) {
+		int[] similarItems = new int[this.itemIds.length];
+		float[] userRatings1 = new float[this.itemIds.length];
+		float[] userRatings2 = new float[this.itemIds.length];
+		int counter = 0;
+		
+		for (int i = 0; i < this.itemIds.length; i++) {
+			for (int j = 0; j < itemsUser2.length; j++) {
+				if(this.itemIds[i] == itemsUser2[j]) {
+					similarItems[counter] = this.itemIds[i];
+					userRatings1[counter] = this.ratings[i];
+					userRatings2[counter] = ratingsUser2[j];
+					counter++;
+				}
+			}
+		}
+		
+		System.arraycopy(similarItems, 0, similarItems, 0, counter);
+		System.arraycopy(userRatings1, 0, userRatings1, 0, counter);
+		System.arraycopy(userRatings2, 0, userRatings2, 0, counter);
+		
+		RecordDataSimilarlyItems rd = new RecordDataSimilarlyItems();
+		rd.items = similarItems;
+		rd.ratings1 = userRatings1;
+		rd.ratings2 = userRatings2;
+		
+		return rd;
+	}
+	
+	public RecordDataNoSimilarlyItems noSimilarItems(int[] itemsUser2, float[] ratingsUser2) {
+		boolean existsInBoth;
+		int[] noSimilarItems = new int[this.itemIds.length];
+		float[] ratings = new float[this.itemIds.length];
+		int counter = 0;
+		
+		for (int i = 0; i < itemsUser2.length; i++) {
+			existsInBoth = false;
+			
+			for (int j = 0; j < this.itemIds.length; j++) {
+				if(this.itemIds[j] == itemsUser2[i]) {
+					existsInBoth = true;
+					break;
+				}
+			}
+			
+			if(!existsInBoth) {
+				noSimilarItems[counter] = itemsUser2[i];
+				ratings[counter] = ratingsUser2[i];
+				counter++;
+			}
+		}
+		
+		System.arraycopy(noSimilarItems, 0, noSimilarItems, 0, counter);
+		System.arraycopy(ratings, 0, ratings, 0, counter);
+		
+		RecordDataNoSimilarlyItems rd = new RecordDataNoSimilarlyItems();
+		rd.items = noSimilarItems;
+		rd.ratings = ratings;
+		
+		return rd;
+	}
+	
+	public double getRatingForItemId() {
+		return 0.0;
 	}
 	
 	public int getUserId() {

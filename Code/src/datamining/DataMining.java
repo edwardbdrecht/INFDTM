@@ -5,16 +5,19 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import recommendationStrategy.*;
 
 
 public class DataMining {
 	static TreeMap<Integer, UserPreferences> userPreferences;
+	static TopProducts tp;
 	
 	public static void main(String[] args) {
 		System.out.println("Please select a datafile");
 		File dataFile = new ChooseFile().getFile();
 		
 		userPreferences = new TreeMap<Integer, UserPreferences>();
+		tp = new TopProducts();
 		
 		int lineNumber = 0;
 		StringTokenizer st = null;
@@ -40,11 +43,19 @@ public class DataMining {
 				}
 				up.addElement(itemId, rating); //add element to userPreferences
 				userPreferences.put(userId, up); //put it back in the TreeMap
+				
+				System.out.println(itemId + " added");
+				tp.addProduct(itemId); //add item to topProducts class for creating top product lists
 			}
 			
 			//DEBUG
 			for(UserPreferences up : userPreferences.values()) {
 				System.out.println(up.toString());
+			}
+			
+			int[] popularProducts = tp.getPopularProducts();
+			for(int popularProduct : popularProducts) {
+				System.out.println(Integer.toString(popularProduct));
 			}
 		}
 		catch(FileNotFoundException e) {
@@ -64,6 +75,11 @@ public class DataMining {
 				scanner.close();
 			}
 		}
+		
+		
+		//RecommendationDistanceStrategy rds = new RecommendationDistanceStrategy(new Manhatten());
+		//rds.getStrategy().execute(null, null);
+		
 		
 		System.exit(0);
 	}
