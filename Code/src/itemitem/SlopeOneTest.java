@@ -117,25 +117,35 @@ public class SlopeOneTest {
          * Add a user
          *
         System.out.println("------- ADDING A USER -------");
-        UserPreferences u6 = new UserPreferences(104);
+        UserPreferences u6 = new UserPreferences(10000);
         u6.addElement(101, 1.0f);
         u6.addElement(102, 2.0f);
         u6.addElement(103, 3.0f);
         u6.addElement(104, 4.0f);
         u6.addElement(105, 4.5f);
-        u6.addElement(106, 5.0f);
-        item.addItem(u6);
+        u6.addElement(100, 5.0f);
+        item.addItem(u6,true);
+        
+        // Another user
+        UserPreferences u7 = new UserPreferences(10001);
+        u7.addElement(101, 2.0f);
+        u7.addElement(102, 4.2f);
+        u7.addElement(103, 1.4f);
+        u7.addElement(104, 3.1f);
+        u7.addElement(105, 3.5f);
+        u7.addElement(110, 2.0f);
+        item.addItem(u7,true);
         item.printALl();
-        * /
+        */
         
         /*
          * Update a user
          *
         System.out.println("------- UPDATE SAME USER -------");
-        u6.addElement(107, 2.9f);
+        u6.addElement(120, 2.9f);
         item.updateItem(u6);
         item.printALl();
-        * /
+        */
         
         /*
          * Remove a user

@@ -25,7 +25,7 @@ public class ItemItem
         ratings = new float[0][0];
         oneSlope = new float[0][0];
         
-        // Fill the userIds and itemIds
+        // Fill the userIds and itemIds first. This way is WAAY faster
         for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
         {
             if(entry.getValue().getItemIds().length > 1)
@@ -39,8 +39,6 @@ public class ItemItem
                 }
             }
         }
-        
-        // TODO: Do in one run, not two
                 
         // Give rating table its new size
         ratings = new float[this.userIds.length][this.itemIds.length];
@@ -161,8 +159,9 @@ public class ItemItem
     /*
      * Adds an item to the Rating table and rebuilds the One Slope table
      */
-    public void addItem(UserPreferences pref)
-    {
+    public void addItem(UserPreferences pref, boolean shouldUpdateOneSlope)
+    {   
+        int[] oldItemIds = Arrays.copyOf(this.itemIds, this.itemIds.length);
         // First add the new UserId and ItemId
         this.userIds = ArrayResize.addItem(pref.getUserId(), this.userIds);
         for(int c = 0; c < pref.getItemIds().length; c++)
@@ -170,35 +169,77 @@ public class ItemItem
             this.itemIds = ArrayResize.addItem(pref.getItemIds()[c], this.itemIds);
         }
         
+        float[][] tempArr = new float[this.userIds.length][this.itemIds.length];
+        
         // Fill the new Rating table
         int posUserId = Arrays.binarySearch(this.userIds, pref.getUserId()); //search in the itemId's array for a corresponding id.
         if(posUserId >= 0)
         {
-            float[][] tempArray = new float[this.userIds.length][this.itemIds.length];
-            
-            // Just copy all old values to new table for all items before position 
-            for(int i = 0; i < posUserId; i++)
+            for(int i = 0; i < this.userIds.length; i++)
             {
+                int unknowns = 0;
                 for(int c = 0; c < this.itemIds.length; c++)
                 {
-                    tempArray[i][c] = this.ratings[i][c];
+                    if(i == posUserId)
+                    {
+                        int pos = Arrays.binarySearch(pref.getItemIds(), this.itemIds[c]);
+                        if(pos >= 0)
+                        {
+                            tempArr[i][c] = pref.getRatings()[pos];
+                        }
+                    }
+                    else if(posUserId+1 < userIds.length)
+                    {
+                        int pos = Arrays.binarySearch(oldItemIds, this.itemIds[c]);
+                        if(pos < 0)
+                        {
+                            unknowns++;
+                            if(oldItemIds.length < unknowns)
+                            {
+                                if(i < posUserId)
+                                {
+                                    tempArr[i][c] = this.ratings[i][c-unknowns];
+                                }
+                                else
+                                {
+                                    tempArr[i][c] = this.ratings[i-1][c-unknowns];
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if(i < posUserId)
+                            {
+                                tempArr[i][c] = this.ratings[i][c];
+                            }
+                            else
+                            {
+                                tempArr[i][c] = this.ratings[i-1][c];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int pos = Arrays.binarySearch(oldItemIds, this.itemIds[c]);
+                        if(pos < 0)
+                        {
+                            unknowns++;
+                            if(oldItemIds.length < unknowns)
+                            {
+                                tempArr[i][c] = this.ratings[i][c-unknowns];
+                            }
+                        }
+                        else
+                        {
+                            tempArr[i][c] = this.ratings[i][pos];    
+                        }
+                    }
                 }
             }
-            // Insert ratings for new user at its new spot
-            for(int p = 0; p < pref.getItemIds().length; p++)
-            {
-                int posItemId = Arrays.binarySearch(this.itemIds, pref.getItemIds()[p]);
-                tempArray[posUserId][posItemId] = pref.getRatings()[p];
-            }
-            //Copy the leftovers
-            for(int d = posUserId+1; d < this.userIds.length; d++)
-            {
-                for(int c = 0; c < this.itemIds.length; c++)
-                {
-                    tempArray[d][c] = this.ratings[d-1][c];
-                }
-            }
-            this.ratings = tempArray;
+        }
+        this.ratings = tempArr;
+        if(shouldUpdateOneSlope)
+        {
             this.createAndFillOneSlope();
         }
     }
@@ -244,21 +285,31 @@ public class ItemItem
      */
     public void updateItem(UserPreferences pref)
     {
+        int[] oldItemIds = Arrays.copyOf(this.itemIds, this.itemIds.length);
+        int[] tmpItemIds = new int[0];
         // Update ItemIds
         for(int c = 0; c < pref.getItemIds().length; c++)
         {
-            this.itemIds = ArrayResize.addItem(pref.getItemIds()[c], this.itemIds);
+            tmpItemIds = ArrayResize.addItem(pref.getItemIds()[c], tmpItemIds);
         }
         
         // Get position in array
         int pos = Arrays.binarySearch(this.userIds, pref.getUserId());
         if(pos >= 0) // Only if truly exists
         {
-            // Update ONLY specified user
-            for(int i = 0; i < pref.getItemIds().length; i++)
+            if(oldItemIds.length == tmpItemIds.length) // Only update lazy if no change to itemIds
             {
-                int posItemId = Arrays.binarySearch(this.itemIds, pref.getItemIds()[i]);
-                this.ratings[pos][posItemId] = pref.getRatings()[i];
+                // Update ONLY specified user
+                for(int i = 0; i < pref.getItemIds().length; i++)
+                {
+                    int posItemId = Arrays.binarySearch(this.itemIds, pref.getItemIds()[i]);
+                    this.ratings[pos][posItemId] = pref.getRatings()[i];
+                }
+            }
+            else 
+            {
+                this.removeItem(pref);
+                this.addItem(pref, false);
             }
         }
         this.createAndFillOneSlope();
