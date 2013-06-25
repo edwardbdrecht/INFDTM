@@ -80,5 +80,6 @@ public class SlopeOneTest {
         ItemItem item = new ItemItem();
         item.buildRatingTable(userPreferences);
         item.printALl();
+        item.getRecommendation(3);
     }
 }

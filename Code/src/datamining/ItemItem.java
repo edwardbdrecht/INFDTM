@@ -72,6 +72,53 @@ public class ItemItem
         
     }
     
+    public int[] getRecommendation(int userId)
+    {
+        int[] res = new int[1];
+        
+        int pos = Arrays.binarySearch(this.userIds, userId);
+        if(pos > -1)
+        {
+            // Get the user ratings and no ratings
+            int[] hasItemIds = new int[0];
+            float[] ratingForIds = new float[0];
+            int[] doesNoteHaveItemIds = new int[0];
+            for(int i = 0; i < itemIds.length; i++)
+            {
+                if(ratings[pos][i] != 0.0)
+                {
+                    hasItemIds = this.addItemId(i, hasItemIds);
+                    ratingForIds = this.addItemId(ratings[pos][i], ratingForIds);
+                    int[] t = new int[0]; 
+                }
+                else
+                {
+                    doesNoteHaveItemIds = this.addItemId(i, doesNoteHaveItemIds);
+                } 
+            }
+            // Get recommendations
+            for(int c = 0; c < doesNoteHaveItemIds.length; c++)
+            {
+                float totalRating = 0.0f;
+                int totalValidRatings = 0;
+                for(int a = 0; a < hasItemIds.length; a++)
+                {
+                    float avaragePrefDif = oneSlope[hasItemIds[a]][doesNoteHaveItemIds[c]];
+                    if(avaragePrefDif != 0.0)
+                    {
+                        float diffAndRating = avaragePrefDif + ratingForIds[a];
+                        totalRating += diffAndRating;
+                        totalValidRatings++;
+                    }
+                }
+                totalRating = totalRating / totalValidRatings;
+                int[] t = new int[0]; 
+            }
+        }
+        
+        return res;
+    }
+    
     /*
      * Adds an item into an array at its proper position
      */
@@ -86,6 +133,32 @@ public class ItemItem
 
                 //get both arrays with 1 extra space for the new item
                 int[] itemIdsCopy = Arrays.copyOf(sourceArr, sourceArr.length+1);
+
+                //check if the position of the new item is at the end or not
+                if(key+1 < itemIdsCopy.length) { //position is not at the end so we need to make space for the new element
+                        System.arraycopy(sourceArr, key, itemIdsCopy, key+1, itemIdsCopy.length-key-1);
+                }
+
+                itemIdsCopy[key] = id;
+                return itemIdsCopy;
+        }
+        return sourceArr;
+    }
+    
+    /*
+     * Adds an item into an array at its proper position
+     */
+    private float[] addItemId(float id, float[] sourceArr)
+    {        
+        int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
+        if (key >= 0) { //this item already exists. Just overwrite the ratings value now
+                sourceArr[key] = id;
+        }
+        else { //new itemId
+                key = Math.abs(key)-1; //define the spot in the array for the new item
+
+                //get both arrays with 1 extra space for the new item
+                float[] itemIdsCopy = Arrays.copyOf(sourceArr, sourceArr.length+1);
 
                 //check if the position of the new item is at the end or not
                 if(key+1 < itemIdsCopy.length) { //position is not at the end so we need to make space for the new element
