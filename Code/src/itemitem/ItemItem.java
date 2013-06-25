@@ -40,6 +40,8 @@ public class ItemItem
             }
         }
         
+        // TODO: Do in one run, not two
+                
         // Give rating table its new size
         ratings = new float[this.userIds.length][this.itemIds.length];
         
