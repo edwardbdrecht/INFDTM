@@ -16,7 +16,7 @@ public class ArrayResize {
     /*
      * Adds an item into an array at its proper position
      */
-    public static int[] addItemId(int id, int[] sourceArr)
+    public static int[] addItem(int id, int[] sourceArr)
     {        
         int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
         if (key >= 0) { //this item already exists. Just overwrite the ratings value now
@@ -42,7 +42,7 @@ public class ArrayResize {
     /*
      * Adds an item into an array at its proper position
      */
-    public static float[] addItemId(float id, float[] sourceArr)
+    public static float[] addItem(float id, float[] sourceArr)
     {        
         int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
         if (key >= 0) { //this item already exists. Just overwrite the ratings value now
@@ -68,7 +68,7 @@ public class ArrayResize {
     /*
      * Adds an item into an array at its proper position
      */
-    public static RecommendationResult[] addItemId(RecommendationResult id, RecommendationResult[] sourceArr)
+    public static RecommendationResult[] addItem(RecommendationResult id, RecommendationResult[] sourceArr)
     {        
         int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
         if (key >= 0) { //this item already exists. Just overwrite the ratings value now
@@ -90,4 +90,9 @@ public class ArrayResize {
         }
         return sourceArr;
     }
+    
+    /*public static float[][] addItem(int xindex, int yindex, )
+    {
+        
+    }*/
 }

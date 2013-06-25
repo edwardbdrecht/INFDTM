@@ -30,12 +30,12 @@ public class ItemItem
         {
             if(entry.getValue().getItemIds().length > 1)
             {
-                this.userIds = ArrayResize.addItemId(entry.getValue().getUserId(), this.userIds);
+                this.userIds = ArrayResize.addItem(entry.getValue().getUserId(), this.userIds);
             
                 // ItemID
                 for(int c = 0; c < entry.getValue().getItemIds().length; c++)
                 {
-                    this.itemIds = ArrayResize.addItemId(entry.getValue().getItemIds()[c], this.itemIds);
+                    this.itemIds = ArrayResize.addItem(entry.getValue().getItemIds()[c], this.itemIds);
                 }
             }
         }
@@ -105,13 +105,13 @@ public class ItemItem
             {
                 if(ratings[pos][i] != 0.0)
                 {
-                    hasItemIds = ArrayResize.addItemId(i, hasItemIds);
-                    ratingForIds = ArrayResize.addItemId(ratings[pos][i], ratingForIds);
+                    hasItemIds = ArrayResize.addItem(i, hasItemIds);
+                    ratingForIds = ArrayResize.addItem(ratings[pos][i], ratingForIds);
                     int[] t = new int[0]; 
                 }
                 else
                 {
-                    doesNoteHaveItemIds = ArrayResize.addItemId(i, doesNoteHaveItemIds);
+                    doesNoteHaveItemIds = ArrayResize.addItem(i, doesNoteHaveItemIds);
                 } 
             }
             /*
@@ -146,7 +146,7 @@ public class ItemItem
                 RecommendationResult result = new RecommendationResult();
                 result.setItemId(itemIds[doesNoteHaveItemIds[c]]);
                 result.setRecomValue(totalRating);
-                recommendation = ArrayResize.addItemId(result, recommendation);
+                recommendation = ArrayResize.addItem(result, recommendation);
             }
             
             return recommendation;
