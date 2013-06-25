@@ -27,12 +27,15 @@ public class ItemItem
         // Fill the userIds and itemIds
         for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
         {
-            this.userIds = this.addItemId(entry.getValue().getUserId(), this.userIds);
-            
-            // ItemID
-            for(int c = 0; c < entry.getValue().getItemIds().length; c++)
+            if(entry.getValue().getItemIds().length > 1)
             {
-                this.itemIds = this.addItemId(entry.getValue().getItemIds()[c], this.itemIds);
+                this.userIds = this.addItemId(entry.getValue().getUserId(), this.userIds);
+            
+                // ItemID
+                for(int c = 0; c < entry.getValue().getItemIds().length; c++)
+                {
+                    this.itemIds = this.addItemId(entry.getValue().getItemIds()[c], this.itemIds);
+                }
             }
         }
         
@@ -43,12 +46,15 @@ public class ItemItem
         int count = 0;
         for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
         {
-            for(int c = 0; c < entry.getValue().getItemIds().length; c++)
+            if(entry.getValue().getItemIds().length > 1)
             {
-                int pos = Arrays.binarySearch(this.itemIds, entry.getValue().getItemIds()[c]);
-                ratings[count][pos] = entry.getValue().getRatings()[c];
+                for(int c = 0; c < entry.getValue().getItemIds().length; c++)
+                {
+                    int pos = Arrays.binarySearch(this.itemIds, entry.getValue().getItemIds()[c]);
+                    ratings[count][pos] = entry.getValue().getRatings()[c];
+                }
+                count++;
             }
-            count++;
         }
         
         /*
@@ -82,9 +88,9 @@ public class ItemItem
         
     }
     
-    public int[] getRecommendation(int userId)
+    public RecommendationResult[] getRecommendation(int userId)
     {
-        int[] res = new int[1];     
+        RecommendationResult[] res = new RecommendationResult[0];     
         int pos = Arrays.binarySearch(this.userIds, userId);
         if(pos > -1)
         {
@@ -115,6 +121,10 @@ public class ItemItem
              *        add this to a running average
              *  return the top items, ranked by these averages
              */
+            
+            // To be returned
+            RecommendationResult[] recommendation = new RecommendationResult[0];
+            
             for(int c = 0; c < doesNoteHaveItemIds.length; c++)
             {
                 float totalRating = 0.0f;
@@ -130,7 +140,13 @@ public class ItemItem
                     }
                 }
                 totalRating = totalRating / totalValidRatings;
+                RecommendationResult result = new RecommendationResult();
+                result.setItemId(itemIds[doesNoteHaveItemIds[c]]);
+                result.setRecomValue(totalRating);
+                recommendation = this.addItemId(result, recommendation);
             }
+            
+            return recommendation;
         }
         
         return res;
@@ -189,10 +205,37 @@ public class ItemItem
     }
     
     /*
+     * Adds an item into an array at its proper position
+     */
+    private RecommendationResult[] addItemId(RecommendationResult id, RecommendationResult[] sourceArr)
+    {        
+        int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
+        if (key >= 0) { //this item already exists. Just overwrite the ratings value now
+                sourceArr[key] = id;
+        }
+        else { //new itemId
+                key = Math.abs(key)-1; //define the spot in the array for the new item
+
+                //get both arrays with 1 extra space for the new item
+                RecommendationResult[] itemIdsCopy = Arrays.copyOf(sourceArr, sourceArr.length+1);
+
+                //check if the position of the new item is at the end or not
+                if(key+1 < itemIdsCopy.length) { //position is not at the end so we need to make space for the new element
+                        System.arraycopy(sourceArr, key, itemIdsCopy, key+1, itemIdsCopy.length-key-1);
+                }
+
+                itemIdsCopy[key] = id;
+                return itemIdsCopy;
+        }
+        return sourceArr;
+    }
+    
+    /*
      * Prints all data. For debugging. FTW
      */
     public void printALl()
     {        
+        System.out.println("------- RATING TABLE -------");
         // Table print
         System.out.print("   ");
         for(int a=0; a < itemIds.length; a++)
@@ -212,7 +255,7 @@ public class ItemItem
             }
             System.out.println("");
         }
-        
+        System.out.println("------- ONE SLOPE -------");
         // OneSlope print
         System.out.print("   ");
         for(int a=0; a < itemIds.length; a++)
