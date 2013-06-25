@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package datamining;
+package itemitem;
 
+import datamining.UserPreferences;
 import java.util.TreeMap;
 
 /**
@@ -80,6 +81,6 @@ public class SlopeOneTest {
         ItemItem item = new ItemItem();
         item.buildRatingTable(userPreferences);
         item.printALl();
-        item.getRecommendation(1);
+        item.getRecommendation(103);
     }
 }

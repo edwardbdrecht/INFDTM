@@ -1,5 +1,6 @@
-package datamining;
+package itemitem;
 
+import datamining.UserPreferences;
 import java.util.TreeMap;
 import java.util.Arrays;
 import java.util.Map;
@@ -83,8 +84,7 @@ public class ItemItem
     
     public int[] getRecommendation(int userId)
     {
-        int[] res = new int[1];
-        
+        int[] res = new int[1];     
         int pos = Arrays.binarySearch(this.userIds, userId);
         if(pos > -1)
         {
