@@ -80,6 +80,7 @@ public class SlopeOneTest {
         // Test ItemItem
         ItemItem item = new ItemItem();
         item.buildRatingTable(userPreferences);
+        item.createAndFillOneSlope();
         item.printALl();
         int userIdToTest = 103;
         RecommendationResult[] r = item.getRecommendation(userIdToTest);

@@ -1,5 +1,6 @@
 package itemitem;
 
+import Util.ArrayResize;
 import datamining.UserPreferences;
 import java.util.TreeMap;
 import java.util.Arrays;
@@ -29,12 +30,12 @@ public class ItemItem
         {
             if(entry.getValue().getItemIds().length > 1)
             {
-                this.userIds = this.addItemId(entry.getValue().getUserId(), this.userIds);
+                this.userIds = ArrayResize.addItemId(entry.getValue().getUserId(), this.userIds);
             
                 // ItemID
                 for(int c = 0; c < entry.getValue().getItemIds().length; c++)
                 {
-                    this.itemIds = this.addItemId(entry.getValue().getItemIds()[c], this.itemIds);
+                    this.itemIds = ArrayResize.addItemId(entry.getValue().getItemIds()[c], this.itemIds);
                 }
             }
         }
@@ -56,7 +57,10 @@ public class ItemItem
                 count++;
             }
         }
-        
+    }
+    
+    public void createAndFillOneSlope()
+    {
         /*
          * OneSlope algorithm
          * 
@@ -85,7 +89,6 @@ public class ItemItem
                 oneSlope[i][c] = totalDif;
             }
         }
-        
     }
     
     public RecommendationResult[] getRecommendation(int userId)
@@ -102,13 +105,13 @@ public class ItemItem
             {
                 if(ratings[pos][i] != 0.0)
                 {
-                    hasItemIds = this.addItemId(i, hasItemIds);
-                    ratingForIds = this.addItemId(ratings[pos][i], ratingForIds);
+                    hasItemIds = ArrayResize.addItemId(i, hasItemIds);
+                    ratingForIds = ArrayResize.addItemId(ratings[pos][i], ratingForIds);
                     int[] t = new int[0]; 
                 }
                 else
                 {
-                    doesNoteHaveItemIds = this.addItemId(i, doesNoteHaveItemIds);
+                    doesNoteHaveItemIds = ArrayResize.addItemId(i, doesNoteHaveItemIds);
                 } 
             }
             /*
@@ -143,91 +146,13 @@ public class ItemItem
                 RecommendationResult result = new RecommendationResult();
                 result.setItemId(itemIds[doesNoteHaveItemIds[c]]);
                 result.setRecomValue(totalRating);
-                recommendation = this.addItemId(result, recommendation);
+                recommendation = ArrayResize.addItemId(result, recommendation);
             }
             
             return recommendation;
         }
         
         return res;
-    }
-    
-    /*
-     * Adds an item into an array at its proper position
-     */
-    private int[] addItemId(int id, int[] sourceArr)
-    {        
-        int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
-        if (key >= 0) { //this item already exists. Just overwrite the ratings value now
-                sourceArr[key] = id;
-        }
-        else { //new itemId
-                key = Math.abs(key)-1; //define the spot in the array for the new item
-
-                //get both arrays with 1 extra space for the new item
-                int[] itemIdsCopy = Arrays.copyOf(sourceArr, sourceArr.length+1);
-
-                //check if the position of the new item is at the end or not
-                if(key+1 < itemIdsCopy.length) { //position is not at the end so we need to make space for the new element
-                        System.arraycopy(sourceArr, key, itemIdsCopy, key+1, itemIdsCopy.length-key-1);
-                }
-
-                itemIdsCopy[key] = id;
-                return itemIdsCopy;
-        }
-        return sourceArr;
-    }
-    
-    /*
-     * Adds an item into an array at its proper position
-     */
-    private float[] addItemId(float id, float[] sourceArr)
-    {        
-        int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
-        if (key >= 0) { //this item already exists. Just overwrite the ratings value now
-                sourceArr[key] = id;
-        }
-        else { //new itemId
-                key = Math.abs(key)-1; //define the spot in the array for the new item
-
-                //get both arrays with 1 extra space for the new item
-                float[] itemIdsCopy = Arrays.copyOf(sourceArr, sourceArr.length+1);
-
-                //check if the position of the new item is at the end or not
-                if(key+1 < itemIdsCopy.length) { //position is not at the end so we need to make space for the new element
-                        System.arraycopy(sourceArr, key, itemIdsCopy, key+1, itemIdsCopy.length-key-1);
-                }
-
-                itemIdsCopy[key] = id;
-                return itemIdsCopy;
-        }
-        return sourceArr;
-    }
-    
-    /*
-     * Adds an item into an array at its proper position
-     */
-    private RecommendationResult[] addItemId(RecommendationResult id, RecommendationResult[] sourceArr)
-    {        
-        int key = Arrays.binarySearch(sourceArr, id); //search in the itemId's array for a corresponding id.
-        if (key >= 0) { //this item already exists. Just overwrite the ratings value now
-                sourceArr[key] = id;
-        }
-        else { //new itemId
-                key = Math.abs(key)-1; //define the spot in the array for the new item
-
-                //get both arrays with 1 extra space for the new item
-                RecommendationResult[] itemIdsCopy = Arrays.copyOf(sourceArr, sourceArr.length+1);
-
-                //check if the position of the new item is at the end or not
-                if(key+1 < itemIdsCopy.length) { //position is not at the end so we need to make space for the new element
-                        System.arraycopy(sourceArr, key, itemIdsCopy, key+1, itemIdsCopy.length-key-1);
-                }
-
-                itemIdsCopy[key] = id;
-                return itemIdsCopy;
-        }
-        return sourceArr;
     }
     
     /*
