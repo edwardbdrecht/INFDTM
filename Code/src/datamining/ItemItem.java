@@ -2,6 +2,7 @@ package datamining;
 
 import java.util.TreeMap;
 import java.util.Arrays;
+import java.util.Map;
 
 public class ItemItem 
 {
@@ -23,15 +24,14 @@ public class ItemItem
         oneSlope = new float[0][0];
         
         // Fill the userIds and itemIds
-        for(int i = 0; i < userPrefs.size(); i++)
+        for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
         {
-            // UserID
-            this.userIds = this.addItemId(userPrefs.get(i+1).getUserId(), this.userIds);
+            this.userIds = this.addItemId(entry.getValue().getUserId(), this.userIds);
             
             // ItemID
-            for(int c = 0; c < userPrefs.get(i+1).getItemIds().length; c++)
+            for(int c = 0; c < entry.getValue().getItemIds().length; c++)
             {
-                this.itemIds = this.addItemId(userPrefs.get(i+1).getItemIds()[c], this.itemIds);
+                this.itemIds = this.addItemId(entry.getValue().getItemIds()[c], this.itemIds);
             }
         }
         
@@ -39,13 +39,15 @@ public class ItemItem
         ratings = new float[this.userIds.length][this.itemIds.length];
         
         // Fill the rating table
-        for(int i = 0; i < userIds.length; i++)
+        int count = 0;
+        for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
         {
-            for(int c = 0; c < userPrefs.get(i+1).getItemIds().length; c++)
+            for(int c = 0; c < entry.getValue().getItemIds().length; c++)
             {
-                int pos = Arrays.binarySearch(this.itemIds, userPrefs.get(i+1).getItemIds()[c]);
-                ratings[i][pos] = userPrefs.get(i+1).getRatings()[c];
+                int pos = Arrays.binarySearch(this.itemIds, entry.getValue().getItemIds()[c]);
+                ratings[count][pos] = entry.getValue().getRatings()[c];
             }
+            count++;
         }
         
         /*
