@@ -48,7 +48,14 @@ public class ItemItem
             }
         }
         
-        // Create the One Slope
+        /*
+         * OneSlope algorithm
+         * 
+         * for every item i
+         *  for every other item j
+         *    for every user u expressing preference  for both i and j
+         *      add the difference in u´s preference for i and j to an average
+         */
         oneSlope = new float[this.itemIds.length][this.itemIds.length];
         for(int i = 0; i < this.itemIds.length; i++)
         {
@@ -96,7 +103,16 @@ public class ItemItem
                     doesNoteHaveItemIds = this.addItemId(i, doesNoteHaveItemIds);
                 } 
             }
-            // Get recommendations
+            /*
+             * Recommendation
+             * 
+             *  For every item i the user u expresses no preference for
+             *      for every item j that user u expresses a preference for
+             *        find the average preference difference between j and i
+             *        add this diff to uâ€™s preference value for j
+             *        add this to a running average
+             *  return the top items, ranked by these averages
+             */
             for(int c = 0; c < doesNoteHaveItemIds.length; c++)
             {
                 float totalRating = 0.0f;
@@ -112,7 +128,6 @@ public class ItemItem
                     }
                 }
                 totalRating = totalRating / totalValidRatings;
-                int[] t = new int[0]; 
             }
         }
         
