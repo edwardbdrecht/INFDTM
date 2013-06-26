@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import recommendationStrategy.*;
-
+import useritem.CreateSimilarityMap;
+import useritem.UserItemRecommendations;
 
 public class DataMining {
 	static TreeMap<Integer, UserPreferences> userPreferences;
@@ -14,13 +14,14 @@ public class DataMining {
 	
 	public static void main(String[] args) {
 		System.out.println("Please select a datafile");
-		File dataFile = new ChooseFile().getFile();
+		//File dataFile = new ChooseFile().getFile();
+		File dataFile = new File("C:\\Users\\kjsdnf\\Desktop\\datamining.txt");
 		
 		userPreferences = new TreeMap<Integer, UserPreferences>();
 		tp = new TopProducts();
 		
 		int lineNumber = 0;
-		StringTokenizer st = null;
+		StringTokenizer st;
 		Scanner scanner = null;
 		//Use a scanner because a BufferedReader is not necessary for this type of datasets (?)
 		try {
@@ -44,8 +45,8 @@ public class DataMining {
 				up.addElement(itemId, rating); //add element to userPreferences
 				userPreferences.put(userId, up); //put it back in the TreeMap
 				
-				System.out.println(itemId + " added");
-				tp.addProduct(itemId); //add item to topProducts class for creating top product lists
+				//System.out.println(itemId + " added");
+				//tp.addProduct(itemId); //add item to topProducts class for creating top product lists
 			}
 			
 			//DEBUG
@@ -53,10 +54,10 @@ public class DataMining {
 				System.out.println(up.toString());
 			}
 			
-			int[] popularProducts = tp.getPopularProducts();
-			for(int popularProduct : popularProducts) {
-				System.out.println(Integer.toString(popularProduct));
-			}
+			//int[] popularProducts = tp.getPopularProducts();
+			//for(int popularProduct : popularProducts) {
+			//	System.out.println(Integer.toString(popularProduct));
+			//}
 		}
 		catch(FileNotFoundException e) {
 			System.out.println("The selected file could not be found!");
@@ -76,10 +77,24 @@ public class DataMining {
 			}
 		}
 		
+		CreateSimilarityMap c = new CreateSimilarityMap(userPreferences);
+		//c.printSimilarityMap(c.getSimilarityMap());
 		
-		//RecommendationDistanceStrategy rds = new RecommendationDistanceStrategy(new Manhatten());
-		//rds.getStrategy().execute(null, null);
+		int[] recommendedItems = UserItemRecommendations.getRecommendations(userPreferences, c.getSimilarityMap().get(16));
+		System.out.println("Recommended userItem items:");
+		for(int recommendedItem : recommendedItems) {
+			System.out.println("Product ID: " + recommendedItem);
+		}
 		
+		//RecordDataNoSimilarlyItems rd = userPreferences.get(17).noSimilarItems(userPreferences.get(15).getItemIds(), userPreferences.get(15).getRatings());
+		//System.out.println("DEBUG");
+		//for(int recommendedItem : rd.items) {
+		//	System.out.println("Product ID: " + recommendedItem);
+		//}
+		
+		//RecommendationDistanceStrategy rds = new RecommendationDistanceStrategy(new Euclideon());
+		//float kaas = rds.getStrategy().execute(userPreferences.get(13), userPreferences.get(16));
+		//System.out.println(kaas);
 		
 		System.exit(0);
 	}
