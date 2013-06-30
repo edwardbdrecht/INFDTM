@@ -2,6 +2,8 @@ package datamining;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -15,7 +17,7 @@ public class DataMining {
 	public static void main(String[] args) {
 		System.out.println("Please select a datafile");
 		//File dataFile = new ChooseFile().getFile();
-		File dataFile = new File("C:\\Users\\kjsdnf\\Desktop\\datamining.txt");
+		File dataFile = new File("C:\\Users\\Wayne Rijsdijk\\Desktop\\datamining.txt");
 		
 		userPreferences = new TreeMap<Integer, UserPreferences>();
 		tp = new TopProducts();
@@ -80,9 +82,12 @@ public class DataMining {
 		CreateSimilarityMap c = new CreateSimilarityMap(userPreferences);
 		//c.printSimilarityMap(c.getSimilarityMap());
 		
-		int[] recommendedItems = UserItemRecommendations.getRecommendations(userPreferences, c.getSimilarityMap().get(16));
+		TopProducts recommendedItems = UserItemRecommendations.getRecommendations(userPreferences, c.getSimilarityMap().get(7));
 		System.out.println("Recommended userItem items:");
-		for(int recommendedItem : recommendedItems) {
+		
+		String[] recommendedItemz = recommendedItems.getPopularProducts(3);
+		Collections.reverse(Arrays.asList(recommendedItemz));
+		for(String recommendedItem : recommendedItemz) {
 			System.out.println("Product ID: " + recommendedItem);
 		}
 		
