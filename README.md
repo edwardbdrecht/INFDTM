@@ -1,0 +1,1 @@
+PLEASE READ--------------All copyright goes to Wayne Rijsdijk and Edward Roozeboom. You may NOT use this code to get a grade for the datamining course at the Rotterdam University of Applied sciences. You may, however, use the code as reference. NO COPIES ALLOWED.

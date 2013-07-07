@@ -16,6 +16,7 @@ public class ItemItem
     
     /*
      * Build table with ratings
+     * SKIP RATING TABLE FOR FAST COMPUTING?
      */
     public void buildRatingTable(TreeMap<Integer, UserPreferences> userPrefs)
     {
@@ -88,6 +89,7 @@ public class ItemItem
                     totalDif = totalDif / totalRatings;
                 oneSlope[i][c] = totalDif;
             }
+            System.out.println("Checking rating for itemID "+i);
         }
     }
     

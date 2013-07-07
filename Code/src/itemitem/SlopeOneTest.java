@@ -13,15 +13,16 @@ import java.util.TreeMap;
  * @author Edward
  */
 public class SlopeOneTest {
-    static TreeMap<Integer, UserPreferences> userPreferences;
+    public TreeMap<Integer, UserPreferences> userPreferences;
     public void testSlopeOne()
     {
-        userPreferences = new TreeMap<Integer, UserPreferences>();
+        //userPreferences = new TreeMap<Integer, UserPreferences>();
         
         /*
          * A small set of users 
          */
         // A user
+        /*
         UserPreferences u1 = new UserPreferences(101);
         u1.addElement(101, 5.0f);
         u1.addElement(102, 3.0f);
@@ -69,7 +70,7 @@ public class SlopeOneTest {
         u5.addElement(104, 4.0f);
         u5.addElement(105, 3.5f);
         u5.addElement(106, 4.0f);
-        userPreferences.put(106, u5);
+        userPreferences.put(106, u5);*/
         
         /*
          * Generate massive amounts of random data
