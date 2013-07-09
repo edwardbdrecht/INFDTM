@@ -12,12 +12,13 @@ import useritem.UserItemRecommendations;
 
 public class DataMining {
 	static TreeMap<Integer, UserPreferences> userPreferences;
+	static TreeMap<Integer, Movie> movies;
 	static TopProducts tp;
 	
 	public static void main(String[] args) {
 		System.out.println("Please select a datafile");
-		//File dataFile = new ChooseFile().getFile();
-		File dataFile = new File("C:\\Users\\Wayne Rijsdijk\\Desktop\\datamining.txt");
+		File dataFile = new ChooseFile().getFile();
+		//File dataFile = new File("C:\\Users\\Wayne Rijsdijk\\Desktop\\datamining.txt");
 		
 		userPreferences = new TreeMap<Integer, UserPreferences>();
 		tp = new TopProducts();
