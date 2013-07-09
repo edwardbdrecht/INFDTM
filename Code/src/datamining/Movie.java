@@ -9,4 +9,9 @@ class Movie {
 	public String name;
 	public String date;
 	public String url;
+        
+	@Override
+	public String toString() {
+                return "MovieID: " + id + " | Name: " + name;
+	}
 }
