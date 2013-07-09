@@ -4,16 +4,19 @@ import Util.ArrayResize;
 import datamining.UserPreferences;
 import java.util.TreeMap;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
-public class ItemItem 
+public class ItemItem
 {
     // Data
     private int[] userIds;
     private int[] itemIds;
     private float[][] ratings;
     private float[][] oneSlope;
-    
+    private int[][] multiplier;
+
     /*
      * Build table with ratings
      * SKIP RATING TABLE FOR FAST COMPUTING?
@@ -25,14 +28,14 @@ public class ItemItem
         itemIds = new int[0];
         ratings = new float[0][0];
         oneSlope = new float[0][0];
-        
+
         // Fill the userIds and itemIds first. This way is WAAY faster
         for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
         {
             if(entry.getValue().getItemIds().length > 1)
             {
                 this.userIds = ArrayResize.addItem(entry.getValue().getUserId(), this.userIds);
-            
+
                 // ItemID
                 for(int c = 0; c < entry.getValue().getItemIds().length; c++)
                 {
@@ -40,10 +43,10 @@ public class ItemItem
                 }
             }
         }
-                
+
         // Give rating table its new size
         ratings = new float[this.userIds.length][this.itemIds.length];
-        
+
         // Fill the rating table
         int count = 0;
         for (Map.Entry<Integer, UserPreferences> entry : userPrefs.entrySet())
@@ -59,18 +62,40 @@ public class ItemItem
             }
         }
     }
-    
+
     public void createAndFillOneSlope()
     {
         /*
          * OneSlope algorithm
-         * 
+         *
          * for every item i
          *  for every other item j
          *    for every user u expressing preference  for both i and j
          *      add the difference in u´s preference for i and j to an average
-         */
+         *
+        oneSlope = new float[0][0];
+        multiplier = new int[0][0];
+        
+        // OVERWRITE
+        itemIds = new int[0];
+        
+        Set<Integer> ks = u.keySet();
+        Iterator it = ks.iterator();
+        while(it.hasNext())
+        {
+            UserPreferences p = (UserPreferences) it.next();
+            for(int i = 0; i < p.getItemIds().length; i++)
+            {
+                ArrayResize.addItem(p.getItemIds()[i], this.itemIds);
+            }
+            oneSlope = new float[this.itemIds.length][this.itemIds.length];
+            for(int c = 0; c < this.itemIds.length; c++)
+            {
+                //oneSlope[][]
+            }
+        }*/
         oneSlope = new float[this.itemIds.length][this.itemIds.length];
+        
         for(int i = 0; i < this.itemIds.length; i++)
         {
             for(int c = 0; c < this.itemIds.length; c++)
@@ -89,13 +114,12 @@ public class ItemItem
                     totalDif = totalDif / totalRatings;
                 oneSlope[i][c] = totalDif;
             }
-            System.out.println("Checking rating for itemID "+i);
         }
     }
-    
+
     public RecommendationResult[] getRecommendation(int userId)
     {
-        RecommendationResult[] res = new RecommendationResult[0];     
+        RecommendationResult[] res = new RecommendationResult[0];
         int pos = Arrays.binarySearch(this.userIds, userId);
         if(pos > -1)
         {
@@ -113,11 +137,11 @@ public class ItemItem
                 else
                 {
                     doesNoteHaveItemIds = ArrayResize.addItem(i, doesNoteHaveItemIds);
-                } 
+                }
             }
             /*
              * Recommendation
-             * 
+             *
              *  For every item i the user u expresses no preference for
              *      for every item j that user u expresses a preference for
              *        find the average preference difference between j and i
@@ -125,10 +149,10 @@ public class ItemItem
              *        add this to a running average
              *  return the top items, ranked by these averages
              */
-            
+
             // To be returned
             RecommendationResult[] recommendation = new RecommendationResult[0];
-            
+
             for(int c = 0; c < doesNoteHaveItemIds.length; c++)
             {
                 float totalRating = 0.0f;
@@ -143,26 +167,26 @@ public class ItemItem
                         totalValidRatings++;
                     }
                 }
-                totalRating = totalRating / totalValidRatings;
+                totalRating = totalValidRatings > 0 ? totalRating / totalValidRatings : 0;
                 RecommendationResult result = new RecommendationResult();
                 result.setItemId(itemIds[doesNoteHaveItemIds[c]]);
                 result.setRecomValue(totalRating);
-                // Get a sorted array. Only use the result if calculated position belongs to top! 
+                // Get a sorted array. Only use the result if calculated position belongs to top!
                 //(stores about 75% less data!) and only takes top 4
                 recommendation = ArrayResize.addItem(result, recommendation, 4);
             }
-            
+
             return recommendation;
         }
-        
+
         return res;
     }
-    
+
     /*
      * Adds an item to the Rating table and rebuilds the One Slope table
      */
     public void addItem(UserPreferences pref, boolean shouldUpdateOneSlope)
-    {   
+    {
         int[] oldItemIds = Arrays.copyOf(this.itemIds, this.itemIds.length);
         // First add the new UserId and ItemId
         this.userIds = ArrayResize.addItem(pref.getUserId(), this.userIds);
@@ -170,9 +194,9 @@ public class ItemItem
         {
             this.itemIds = ArrayResize.addItem(pref.getItemIds()[c], this.itemIds);
         }
-        
+
         float[][] tempArr = new float[this.userIds.length][this.itemIds.length];
-        
+
         // Fill the new Rating table
         int posUserId = Arrays.binarySearch(this.userIds, pref.getUserId()); //search in the itemId's array for a corresponding id.
         if(posUserId >= 0)
@@ -233,7 +257,7 @@ public class ItemItem
                         }
                         else
                         {
-                            tempArr[i][c] = this.ratings[i][pos];    
+                            tempArr[i][c] = this.ratings[i][pos];
                         }
                     }
                 }
@@ -245,12 +269,12 @@ public class ItemItem
             this.createAndFillOneSlope();
         }
     }
-    
+
     /*
      * Removes an item from the Rating table and rebuilds the One Slope table
      */
     public void removeItem(UserPreferences pref)
-    {        
+    {
         // Get position in array
         int pos = Arrays.binarySearch(this.userIds, pref.getUserId());
         if(pos >= 0) // Only if truly exists
@@ -278,10 +302,10 @@ public class ItemItem
 
             this.userIds = tempUserIds;
             this.ratings = tempratingTable;
-            this.createAndFillOneSlope();       
+            this.createAndFillOneSlope();
         }
     }
-    
+
     /*
      * Prints all data. For debugging. FTW
      */
@@ -294,7 +318,7 @@ public class ItemItem
         {
             tmpItemIds = ArrayResize.addItem(pref.getItemIds()[c], tmpItemIds);
         }
-        
+
         // Get position in array
         int pos = Arrays.binarySearch(this.userIds, pref.getUserId());
         if(pos >= 0) // Only if truly exists
@@ -308,7 +332,7 @@ public class ItemItem
                     this.ratings[pos][posItemId] = pref.getRatings()[i];
                 }
             }
-            else 
+            else
             {
                 this.removeItem(pref);
                 this.addItem(pref, false);
@@ -316,12 +340,12 @@ public class ItemItem
         }
         this.createAndFillOneSlope();
     }
-    
+
     /*
      * Prints all data. For debugging. FTW
      */
     public void printALl()
-    {        
+    {
         System.out.println("------- RATING TABLE -------");
         // Table print
         System.out.print("   ");

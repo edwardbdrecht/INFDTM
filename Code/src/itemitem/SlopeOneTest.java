@@ -111,6 +111,7 @@ public class SlopeOneTest {
          */
         ItemItem item = new ItemItem();
         item.buildRatingTable(userPreferences);
+        System.out.println("Starting OneSlope creation");
         item.createAndFillOneSlope();
         item.printALl();
         
@@ -118,24 +119,25 @@ public class SlopeOneTest {
          * Add a user
          *
         System.out.println("------- ADDING A USER -------");
-        UserPreferences u6 = new UserPreferences(10000);
+        UserPreferences u6 = new UserPreferences(6);
         u6.addElement(101, 1.0f);
         u6.addElement(102, 2.0f);
         u6.addElement(103, 3.0f);
         u6.addElement(104, 4.0f);
         u6.addElement(105, 4.5f);
-        u6.addElement(100, 5.0f);
+        u6.addElement(110, 5.0f);
         item.addItem(u6,true);
         
         // Another user
-        UserPreferences u7 = new UserPreferences(10001);
+        UserPreferences u7 = new UserPreferences(7);
         u7.addElement(101, 2.0f);
         u7.addElement(102, 4.2f);
         u7.addElement(103, 1.4f);
         u7.addElement(104, 3.1f);
         u7.addElement(105, 3.5f);
-        u7.addElement(110, 2.0f);
+        u7.addElement(108, 2.0f);
         item.addItem(u7,true);
+       
         item.printALl();
         */
         
@@ -159,8 +161,13 @@ public class SlopeOneTest {
         /*
          * Get ItemItem based recommendation for specified user
          */
-        int userIdToTest = 103;
+        int userIdToTest = 5;
+        System.out.println("Starting recommendation");
+        long before = System.currentTimeMillis();
         RecommendationResult[] r = item.getRecommendation(userIdToTest);
+        long after = System.currentTimeMillis();
+        long diff = after - before;
+        System.out.println("Used time: " + diff + "ms (" + after + " - "+ before +")");
         
         /*
          * Print recommendation
