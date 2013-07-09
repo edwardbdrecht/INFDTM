@@ -16,12 +16,17 @@ public class DataMining {
 	static TopProducts tp;
 	
 	public static void main(String[] args) {
+		System.out.println("Please select a movies file");
+		File moviesFile = new ChooseFile().getFile();
+		
 		System.out.println("Please select a datafile");
 		File dataFile = new ChooseFile().getFile();
 		//File dataFile = new File("C:\\Users\\Wayne Rijsdijk\\Desktop\\datamining.txt");
 		
 		userPreferences = new TreeMap<Integer, UserPreferences>();
 		tp = new TopProducts();
+		
+		movies = DataMining.getMovies(moviesFile);
 		
 		int lineNumber = 0;
 		StringTokenizer st;
@@ -103,5 +108,52 @@ public class DataMining {
 		//System.out.println(kaas);
 		
 		System.exit(0);
+	}
+	
+	public static TreeMap<Integer, Movie> getMovies(File moviesFile) {
+		TreeMap<Integer, Movie> movies = new TreeMap<Integer, Movie>();
+		
+		int lineNumber = 0;
+		StringTokenizer st;
+		Scanner scanner = null;
+		//Use a scanner because a BufferedReader is not necessary for this type of datasets (?)
+		try {
+			scanner = new Scanner(moviesFile);
+			while(scanner.hasNextLine()) {
+				lineNumber++;
+				String nextLine = scanner.nextLine();
+				if(nextLine == null) { //makes sure that no null value is passed to the StringTokenizer. This is a part of the data validation system.
+					continue;
+				}
+				st = new StringTokenizer(nextLine, "|"); //use StringTokenizer, because that's twice as fast as String.split() when using simple patterns
+				
+				Movie movie = new Movie();
+				movie.id = Integer.parseInt(st.nextToken());
+				movie.name = st.nextToken();
+				movie.date = st.nextToken();
+				movie.url = st.nextToken();
+				
+				movies.put(movie.id, movie); //put it in the TreeMap
+			}
+		}
+		catch(FileNotFoundException e) {
+			System.out.println("The selected file could not be found!");
+		}
+		catch(NumberFormatException e) {
+			System.out.println("It look likes the data is corrupted! (Line: " + lineNumber + ")");
+			e.getMessage();
+			e.getStackTrace();
+		}
+		catch(Exception e) {
+			System.out.println("A unknown error occured: " + e.getMessage());
+			e.getStackTrace();
+		}
+		finally {
+			if(scanner != null) {
+				scanner.close();
+			}
+		}
+		
+		return movies;
 	}
 }
