@@ -119,7 +119,8 @@ public class DataMining {
         String[] recommendedItemz = recommendedItems.getPopularProducts(3);
         Collections.reverse(Arrays.asList(recommendedItemz));
         for (String recommendedItem : recommendedItemz) {
-            System.out.println("Product: " + movies.get(Integer.parseInt(recommendedItem)).name);
+			System.out.println("Product: " + recommendedItem);
+            //System.out.println("Product: " + movies.get(Integer.parseInt(recommendedItem)).name);
         }
 
         //RecordDataNoSimilarlyItems rd = userPreferences.get(17).noSimilarItems(userPreferences.get(15).getItemIds(), userPreferences.get(15).getRatings());

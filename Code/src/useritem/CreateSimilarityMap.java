@@ -33,8 +33,8 @@ public class CreateSimilarityMap {
 				
 				if(u1.getUserId() != u2.getUserId()) {
 					float distance = rds.getStrategy().execute(u1, u2);
-					if(distance >= 0.35) {
-					//if(distance >= 0.35 && u2.getUserId() != 3) { //filter users that are under a limit
+					//if(distance >= 0.35) {
+					if(distance >= 0.35 && u2.getUserId() != 3) { //filter users that are under a limit
 						rdd.addElement(u2.getUserId(), distance, 3);
 					
 						counter++;
