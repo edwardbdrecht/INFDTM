@@ -16,7 +16,7 @@ public class RecordDataDistance {
 		this.distances = new float[0]; //geen double gezien we geen superprecisie nodig hebben, maar wel een laag geheugenverbruik
 	}
 	
-	public void addElement(int user, float distance) {
+	public void addElement(int user, float distance, int k) {
 		if(this.users.length <= 0) { //No elements exist yet. Make new arrays and add the values
 			this.users = new int[]{user};
 			this.distances = new float[]{distance};
@@ -42,9 +42,22 @@ public class RecordDataDistance {
 				usersCopy[key] = user;
 				distancesCopy[key] = distance;
 				
-				this.users = Arrays.copyOf(usersCopy, usersCopy.length > 10 ? 10 : usersCopy.length);
-				this.distances = Arrays.copyOf(distancesCopy, distancesCopy.length > 10 ? 10 : distancesCopy.length);
+				if(usersCopy.length > k) {
+					this.users = Arrays.copyOfRange(usersCopy, usersCopy.length-k, usersCopy.length);
+					this.distances = Arrays.copyOfRange(distancesCopy, distancesCopy.length-k, distancesCopy.length);
+					
+					//this.users = Arrays.copyOf(usersCopy, usersCopy.length > k ? k : usersCopy.length);
+					//this.distances = Arrays.copyOf(distancesCopy, distancesCopy.length > k ? k : distancesCopy.length);
+				}
+				else {
+					this.users = usersCopy;
+					this.distances = distancesCopy;
+				}
 			}
 		}
+	}
+	
+	public void addElement(int user, float distance) {
+		this.addElement(user,distance,3);
 	}
 }

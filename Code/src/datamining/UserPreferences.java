@@ -113,8 +113,12 @@ public class UserPreferences {
 		return rd;
 	}
 	
-	public double getRatingForItemId() {
-		return 0.0;
+	public float getRatingForItemId(int itemId) {
+		int key = this.find(this.itemIds, itemId);
+		if(key >= 0) {
+			return this.ratings[key];
+		}
+		return 0.0f;
 	}
 	
 	public int getUserId() {
@@ -127,6 +131,15 @@ public class UserPreferences {
 	
 	public float[] getRatings() {
 		return this.ratings;
+	}
+	
+	private int find(int[] array, int value) {
+		for(int i=0; i<array.length; i++) {
+			 if(array[i] == value) {
+				 return i;
+			 }
+		}
+		return -1;
 	}
 	
 	@Override
